@@ -56,6 +56,7 @@ public class Tickets {
                         );
                         ticket.setDuration(duration);
                     }
+
                     return ticket;
                 }).collect(Collectors.toList());
     }
