@@ -49,8 +49,43 @@ public class Tickets {
                 }
             });
 
+            // список цен
+            List<Integer> prices = flight_duration.stream()
+                    .map(TicketClass::getPrice).sorted()
+                    .collect(Collectors.toList());
+            // средняя цена
+            double averagePrice = prices.stream()
+                    .mapToInt(Integer::intValue)
+                    .average()
+                    .getAsDouble();
+
+            // Медианная цена
+            double medianPrice = calculateMedian(prices);
+            // Разница между средней ценой и медианой
+            double difference = averagePrice - medianPrice;
+
+            System.out.printf("Средняя цена: %.2f рублей%n", averagePrice);
+            System.out.printf("Медианная цена: %.2f рублей%n", medianPrice);
+            System.out.printf("Разница между средней и медианной ценой: %.2f рублей%n", difference);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // отсортирвоанный по возрастанию список цен
+    private static double calculateMedian(List<Integer> prices) {
+        int size = prices.size();
+        if (size == 0) return 0.0;
+
+        if (size % 2 == 0) {
+            // Четное количество элементов - среднее двух центральных
+            int mid1 = prices.get(size / 2 - 1);
+            int mid2 = prices.get(size / 2);
+            return (mid1 + mid2) / 2.0;
+        } else {
+            // Нечетное количество элементов - центральный элемент
+            return prices.get(size / 2);
         }
     }
 
