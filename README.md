@@ -95,7 +95,7 @@ mvn exec:java -Dexec.mainClass="TicketAnalyzer" -Dexec.args="tickets.json"
 </build>
 ```
 
-## Ожидаемый вывод
+## Пример вывода
 
 ```
 Минимальное время полета для каждого авиаперевозчика:
