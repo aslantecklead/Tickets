@@ -60,6 +60,7 @@ public class Tickets {
                 }).collect(Collectors.toList());
     }
 
+
     private static long calculate_flight_duration(String departureTime, String arrivalTime) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
