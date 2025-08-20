@@ -14,10 +14,7 @@ import java.lang.reflect.Array;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,14 +27,25 @@ public class Tickets {
             TicketWrapper wrapper = mapper.readValue(new File("tickets.json"), TicketWrapper.class);
             TicketClass[] tickets = wrapper.getTickets();
 
-            List filteresFlights = filter_flights(tickets);
+            List<TicketClass> filteresFlights = filter_flights(tickets);
+            List<TicketClass> flight_duration = calculate_duration(filteresFlights);
 
-            List flight_duration = calculate_duration(filteresFlights);
-            flight_duration.forEach(ticket -> {
-                try {
-                    System.out.println(mapper.writeValueAsString(ticket));
-                } catch (JsonProcessingException e) {
-                    System.out.println(ticket.toString());
+            Map<String, Optional<Long>> minDurationByCarrier = flight_duration.stream()
+                    .collect(Collectors.groupingBy(
+                            TicketClass::getCarrier,
+                            Collectors.mapping(
+                                    TicketClass::getDuration,
+                                    Collectors.minBy(Comparator.naturalOrder())
+                            )
+                    ));
+            System.out.println("Минимальное время полета для каждого авиаперевозчика:");
+            minDurationByCarrier.forEach((carrier, minDuration) -> {
+                if (minDuration.isPresent()) {
+                    long minutes = minDuration.get();
+                    long hours = minutes / 60;
+                    long remainingMinutes = minutes % 60;
+                    System.out.printf("Перевозчик %s: %d часов %d минут (%d минут)%n",
+                            carrier, hours, remainingMinutes, minutes);
                 }
             });
 
